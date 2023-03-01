@@ -7,6 +7,9 @@ import folium
 from streamlit_folium import st_folium
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import train_test_split
+from selenium import webdriver
+import os
+from dotenv import load_dotenv
 
 state_city_dict = {
 'AL': ['Birmingham', 'Montgomery', 'Mobile'],
@@ -61,18 +64,25 @@ state_city_dict = {
 'WY': ['Cheyenne', 'Casper', 'Laramie', 'Gillette']
 }
 
+load_dotenv()
+
+API_KEY = os.getenv('X_RapidAPI_Key')
+API_HOST = os.getenv('X_RapidAPI_Host')
+
 
 @st.cache
+
 def get_property_listings(city, state, limit):
     url = "https://realty-mole-property-api.p.rapidapi.com/saleListings"
     querystring = {"city": city, "state": state, "limit": limit}
     headers = {
-        "X-RapidAPI-Key": "ed559ee283msh649d2a47430748cp19d57ajsn27b169833529",
-        "X-RapidAPI-Host": "realty-mole-property-api.p.rapidapi.com"
+        "X-RapidAPI-Key": API_KEY,
+        "X-RapidAPI-Host": API_HOST
     }
     response = requests.request("GET", url, headers=headers, params=querystring)
     real_estate_df = pd.DataFrame(json.loads(response.text))
     real_estate_df = real_estate_df[~real_estate_df['propertyType'].isin(['Land', 'Manufactured', 'Duplex-Triplex'])]
+    real_estate_df = real_estate_df.drop(['county', 'addressLine1', 'city', 'state', 'zipCode', 'lastSeen', 'listedDate', 'status', 'removedDate', 'createdDate', 'id', 'addressLine2'], axis=1)
     return real_estate_df
 
 def create_map(real_estate_df):
@@ -133,9 +143,10 @@ map_real_estate = create_map(real_estate_df)
 st.write("Map of Real Estate Properties")
 st_folium(map_real_estate)
 
-st.header("KNN Regression Model")
+st.header("Actual Price Prediction Using KNN Neighbors")
 
 address = st.text_input("Enter an address:")
 if address:
     predicted_price = fit_knn(real_estate_df, address)
     st.write(predicted_price)
+
