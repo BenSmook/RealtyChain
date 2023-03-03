@@ -10,6 +10,13 @@ from sklearn.model_selection import train_test_split
 from selenium import webdriver
 import os
 from dotenv import load_dotenv
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, max_error
+
+
 
 state_city_dict = {
 'AL': ['Birmingham', 'Montgomery', 'Mobile'],
@@ -94,23 +101,32 @@ def create_map(real_estate_df):
         ).add_to(map_)
     return map_
 
-def fit_knn(real_estate_df, address):
+def fit_knn(real_estate_df, address, relevant_features=["latitude", "longitude", "bedrooms", "bathrooms", "squareFootage", "lotSize"]):
     address_df = real_estate_df[real_estate_df['formattedAddress'].str.contains(address, case=False)]
     if len(address_df) == 0:
         return 'No matching address found'
     elif len(address_df) > 1:
-        st.warning('Multiple matching addresses found. Using the first one.')
-    X = real_estate_df[["latitude", "longitude"]]
+        print('Multiple matching addresses found. Using the first one.')
+    X = real_estate_df[relevant_features]
     y = real_estate_df["price"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    # Replace NaN values with mean of respective feature
+    X_train = X_train.fillna(X_train.mean())
+    X_test = X_test.fillna(X_test.mean())
     knn = KNeighborsRegressor(n_neighbors=5)
     knn.fit(X_train, y_train)
     latitude = address_df.iloc[0]['latitude']
     longitude = address_df.iloc[0]['longitude']
-    X_test = pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]})
+    beds = address_df.iloc[0]['bedrooms']
+    baths = address_df.iloc[0]['bathrooms']
+    sqft = address_df.iloc[0]['squareFootage']
+    lot_size = address_df.iloc[0]['lotSize']
+    # Replace NaN values with mean of respective feature
+    X_test = pd.DataFrame({'latitude': [latitude], 'longitude': [longitude], 'bedrooms': [beds], 'bathrooms': [baths], 'squareFootage': [sqft], 'lotSize': [lot_size]}).fillna(X_train.mean())
     y_pred = knn.predict(X_test)
     predicted_price = '${:,.0f}'.format(y_pred[0])
-    return f"Predicted price for {address}, : {predicted_price}"
+    return predicted_price
+
     
 
 
