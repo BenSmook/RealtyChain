@@ -7,7 +7,6 @@ import folium
 from streamlit_folium import st_folium
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import train_test_split
-from selenium import webdriver
 import os
 from dotenv import load_dotenv
 from sklearn.preprocessing import StandardScaler
