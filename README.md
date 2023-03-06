@@ -15,7 +15,7 @@ The purpose of this project is to provide a user-friendly web app that allows us
 
 1. Search Listings: Users can select a state, city, and number of listings from the sidebar, and the app will display a table with the selected listings. This functionality is implemented using the Realty Mole Property API.
 
-2. Actual Price Prediction Using KNN Neighbors: Users can enter an address in a text input, and the app will use the KNN algorithm to predict the actual price of the property. This functionality is implemented using the Scikit-learn library.
+2. Actual Price Prediction Using Random Forest: Users can enter an address in a text input, and the app will use the KNN algorithm to predict the actual price of the property. This functionality is implemented using the Scikit-learn library.
 
 ## Technologies
 
