@@ -1,6 +1,6 @@
 # Real Estate Listings Web App
 
-This is a Python web app that allows users to search for real estate properties in the US and get actual price predictions using the KNN algorithm.
+This is a Python web app that allows users to search for real estate properties in the US and get actual price predictions using the Random Forest Regressor algorithm.
 
 ## Table of Contents
 
@@ -11,11 +11,11 @@ This is a Python web app that allows users to search for real estate properties 
 
 ## Introduction
 
-The purpose of this project is to provide a user-friendly web app that allows users to search for real estate properties in the US and get actual price predictions using the KNN algorithm. The app has two main functionalities:
+The purpose of this project is to provide a user-friendly web app that allows users to search for real estate properties in the US and get actual price predictions using the Random Forest Regressor algorithm. The app has two main functionalities:
 
 1. Search Listings: Users can select a state, city, and number of listings from the sidebar, and the app will display a table with the selected listings. This functionality is implemented using the Realty Mole Property API.
 
-2. Actual Price Prediction Using Random Forest: Users can enter an address in a text input, and the app will use the KNN algorithm to predict the actual price of the property. This functionality is implemented using the Scikit-learn library.
+2. Actual Price Prediction Using Random Forest: Users can enter an address in a text input, and the app will use the Random Forest Regressor algorithm to predict the actual price of the property. This functionality is implemented using the Scikit-learn library.
 
 ## Technologies
 
