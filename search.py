@@ -1,2 +1,0 @@
-X_RapidAPI_Key=ed559ee283msh649d2a47430748cp19d57ajsn27b169833529
-X_RapidAPI_Host=realty-mole-property-api.p.rapidapi.com
