@@ -7,6 +7,8 @@ import folium
 from streamlit_folium import st_folium
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVR
 import os
 from dotenv import load_dotenv
 from sklearn.preprocessing import StandardScaler
@@ -100,33 +102,30 @@ def create_map(real_estate_df):
         ).add_to(map_)
     return map_
 
-def fit_knn(real_estate_df, address, relevant_features=["latitude", "longitude", "bedrooms", "bathrooms", "squareFootage", "lotSize"]):
+def fit_random_forest(real_estate_df, address, relevant_features=["latitude", "longitude", "bedrooms", "bathrooms", "squareFootage", "lotSize"]):
     address_df = real_estate_df[real_estate_df['formattedAddress'].str.contains(address, case=False)]
     if len(address_df) == 0:
         return 'No matching address found'
     elif len(address_df) > 1:
         print('Multiple matching addresses found. Using the first one.')
-    X = real_estate_df[relevant_features]
+
+    X = real_estate_df[relevant_features].fillna(real_estate_df.mean())
     y = real_estate_df["price"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    # Replace NaN values with mean of respective feature
-    X_train = X_train.fillna(X_train.mean())
-    X_test = X_test.fillna(X_test.mean())
-    knn = KNeighborsRegressor(n_neighbors=5)
-    knn.fit(X_train, y_train)
-    latitude = address_df.iloc[0]['latitude']
-    longitude = address_df.iloc[0]['longitude']
-    beds = address_df.iloc[0]['bedrooms']
-    baths = address_df.iloc[0]['bathrooms']
-    sqft = address_df.iloc[0]['squareFootage']
-    lot_size = address_df.iloc[0]['lotSize']
-    # Replace NaN values with mean of respective feature
-    X_test = pd.DataFrame({'latitude': [latitude], 'longitude': [longitude], 'bedrooms': [beds], 'bathrooms': [baths], 'squareFootage': [sqft], 'lotSize': [lot_size]}).fillna(X_train.mean())
-    y_pred = knn.predict(X_test)
-    predicted_price = '${:,.0f}'.format(y_pred[0])
-    return predicted_price
 
-    
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    rf = RandomForestRegressor(n_estimators=800, max_depth=20, min_samples_split=15, min_samples_leaf=2, random_state=1)
+    rf.fit(X_train_scaled, y_train)
+
+    address_info = address_df.iloc[0][relevant_features].fillna(X_train.mean())
+    address_info_scaled = scaler.transform([address_info])
+    y_pred = rf.predict(address_info_scaled)[0]
+    predicted_price = '${:,.0f}'.format(y_pred)
+
+    return predicted_price
 
 
 
@@ -162,7 +161,7 @@ def page1():
 
     address = st.text_input("Enter an address:")
     if address:
-        predicted_price = fit_knn(real_estate_df, address)
+        predicted_price = fit_random_forest(real_estate_df, address)
         st.write(predicted_price)
 
 def page2():       
