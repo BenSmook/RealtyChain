@@ -59,10 +59,23 @@ To run this web app, you need to follow these steps:
 
 5. Open your browser and go to http://localhost:8501.
 
+## Calculations for Investors
+
+In addition to providing a search functionality and price predictions, the app also provides calculations for investors to help them evaluate the potential profitability of a property. These calculations include:
+
+- Monthly mortgage payment: calculated using the total loan amount, interest rate, and loan term.
+- Monthly rent: calculated using the rental income and vacancy rate.
+- Monthly expenses: calculated as a percentage of the purchase price, including property taxes, insurance, and maintenance costs.
+- Cash flow: calculated as the difference between the monthly rent and monthly expenses.
+- Cap rate: calculated as the net operating income divided by the purchase price.
+- Cash-on-cash return: calculated as the annual cash flow divided by the total cash invested (including the down payment and closing costs).
+
+These calculations are displayed in a table for each property, along with the predicted price and other property details.
+
 ## Future Improvements
 
 There are several improvements that could be made to this project:
 
 - Add more search criteria, such as price range and property type.
 - Use a different algorithm to improve the price prediction accuracy.
-- Implement a database to store the search results and the predicted prices.
+- Implement a database to store the search results and the predicted prices. 
