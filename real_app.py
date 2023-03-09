@@ -16,6 +16,9 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, max_error
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_squared_error
 
 
 
@@ -102,7 +105,9 @@ def create_map(real_estate_df):
         ).add_to(map_)
     return map_
 
-def fit_random_forest(real_estate_df, address, relevant_features=["latitude", "longitude", "bedrooms", "bathrooms", "squareFootage", "lotSize"]):
+
+
+def fit_random_forest(real_estate_df, address, relevant_features=["latitude", "longitude", "squareFootage", "lotSize"]):
     address_df = real_estate_df[real_estate_df['formattedAddress'].str.contains(address, case=False)]
     if len(address_df) == 0:
         return 'No matching address found'
@@ -113,16 +118,25 @@ def fit_random_forest(real_estate_df, address, relevant_features=["latitude", "l
     y = real_estate_df["price"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    param_grid = {
+        'n_estimators': [100, 500, 1000],
+        'max_depth': [5, 10, 20],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4]
+    }
 
-    rf = RandomForestRegressor(n_estimators=800, max_depth=5, min_samples_split=15, min_samples_leaf=2, random_state=1)
-    rf.fit(X_train_scaled, y_train)
+    gb = GradientBoostingRegressor()
+    grid_search = GridSearchCV(gb, param_grid, cv=5, scoring='neg_mean_squared_error')
+    grid_search.fit(X_train, y_train)
+
+    best_params = grid_search.best_params_
+    print(f"Best parameters found: {best_params}")
+
+    rf = RandomForestRegressor(**best_params, random_state=1)
+    rf.fit(X_train, y_train)
 
     address_info = address_df.iloc[0][relevant_features].fillna(X_train.mean())
-    address_info_scaled = scaler.transform([address_info])
-    y_pred = rf.predict(address_info_scaled)[0]
+    y_pred = rf.predict([address_info])[0]
     predicted_price = '${:,.0f}'.format(y_pred)
 
     return predicted_price
@@ -195,8 +209,8 @@ def page2():
             st.write("Annual Payment:")
             st.write(f"   - Total: ${result['annual_payment']['total']}")
             st.write(f"   - Mortgage: ${result['annual_payment']['mortgage']}")
-            st.write(f"   - Property Tax: Market Specific")
-            st.write(f"   - HOA: Property Specific")
+            st.write(f"   - Property Tax: ${result['annual_payment']['property_tax']}")
+            st.write(f"   - HOA: ${result['annual_payment']['hoa']}")
             st.write(f"   - Annual Home Insurance: ${result['annual_payment']['home_insurance']}")
             st.write("Total Interest Paid: ${result['total_interest_paid']}")
         else:
