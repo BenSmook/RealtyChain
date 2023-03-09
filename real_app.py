@@ -117,7 +117,7 @@ def fit_random_forest(real_estate_df, address, relevant_features=["latitude", "l
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    rf = RandomForestRegressor(n_estimators=800, max_depth=20, min_samples_split=15, min_samples_leaf=2, random_state=1)
+    rf = RandomForestRegressor(n_estimators=800, max_depth=5, min_samples_split=15, min_samples_leaf=2, random_state=1)
     rf.fit(X_train_scaled, y_train)
 
     address_info = address_df.iloc[0][relevant_features].fillna(X_train.mean())
@@ -195,8 +195,8 @@ def page2():
             st.write("Annual Payment:")
             st.write(f"   - Total: ${result['annual_payment']['total']}")
             st.write(f"   - Mortgage: ${result['annual_payment']['mortgage']}")
-            st.write(f"   - Property Tax: ${result['annual_payment']['property_tax']}")
-            st.write(f"   - HOA: ${result['annual_payment']['hoa']}")
+            st.write(f"   - Property Tax: Market Specific")
+            st.write(f"   - HOA: Property Specific")
             st.write(f"   - Annual Home Insurance: ${result['annual_payment']['home_insurance']}")
             st.write("Total Interest Paid: ${result['total_interest_paid']}")
         else:
