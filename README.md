@@ -79,3 +79,5 @@ There are several improvements that could be made to this project:
 - Add more search criteria, such as price range and property type.
 - Use a different algorithm to improve the price prediction accuracy.
 - Implement a database to store the search results and the predicted prices. 
+
+[Real Estate UI](https://bensmook-realtychain-real-app-trx0et.streamlit.app/)
