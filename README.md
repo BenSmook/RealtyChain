@@ -18,6 +18,7 @@ The purpose of this project is to provide a user-friendly web app that allows us
 2. Actual Price Prediction Using Random Forest: Users can enter an address in a text input, and the app will use the Random Forest Regressor algorithm to predict the actual price of the property. This functionality is implemented using the Scikit-learn library.
 
 ## Technologies
+![unnamed](https://user-images.githubusercontent.com/112779801/224235597-07f57acc-6862-4f3c-aec4-5d479b16e72a.png)
 
 This project was built using the following technologies:
 
