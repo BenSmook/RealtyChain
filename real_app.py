@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import requests
-import json
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
